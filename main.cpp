@@ -4,6 +4,12 @@
 
 #include "multiqueue.h"
 
+void print(const std::vector<int> & v) {
+    for (int elem: v) {
+        std::cout << elem << ", ";
+    } std::cout << std::endl;
+}
+
 std::vector<int> count_inversions(const std::vector<int> & v) {
     std::vector<int> element_inversions;
     element_inversions.reserve(v.size());
@@ -44,9 +50,7 @@ void benchmark(int m, int k0, int k1) {
     } std::cout << std::endl;
 
     auto inversions = count_inversions(returned_elements);
-    for (int inv: inversions) {
-        std::cout << inv << " ";
-    } std::cout << std::endl;
+    print(inversions);
 }
 
 
