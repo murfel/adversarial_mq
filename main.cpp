@@ -1,5 +1,20 @@
+#include <algorithm>
 #include <iostream>
+#include <set>
+
 #include "multiqueue.h"
+
+std::vector<int> count_inversions(const std::vector<int> & v) {
+    std::vector<int> element_inversions;
+    element_inversions.reserve(v.size());
+
+    for (auto it = v.begin(); it != v.end(); it++) {
+        element_inversions.push_back(std::count_if(v.begin(), it, [it](int x) { return x > *it; }));
+    }
+    std::vector<int> total_inversions(v.size());
+    std::partial_sum(element_inversions.begin(), element_inversions.end(), total_inversions.begin());
+    return total_inversions;
+}
 
 void benchmark(int m, int k0, int k1) {
     int n = k0 + (m - 1) * k1;
@@ -27,7 +42,11 @@ void benchmark(int m, int k0, int k1) {
     for (int element: returned_elements) {
         std::cout << element << " ";
     } std::cout << std::endl;
-    // TODO: count the number of inversions for each returned_elements array prefix
+
+    auto inversions = count_inversions(returned_elements);
+    for (int inv: inversions) {
+        std::cout << inv << " ";
+    } std::cout << std::endl;
 }
 
 
