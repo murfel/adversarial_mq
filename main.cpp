@@ -45,9 +45,14 @@ void benchmark(int m, int k0, int k1) {
     for (int i = 0; i < n; i++) {
         returned_elements.push_back(mq.delete_min());
     }
-    for (int element: returned_elements) {
-        std::cout << element << " ";
-    } std::cout << std::endl;
+    print(returned_elements);
+
+    std::vector<int> rank_errors;
+    rank_errors.reserve(returned_elements.size());
+    for (int i = 0; i < returned_elements.size(); i++) {
+        rank_errors.push_back(i - returned_elements[i]);
+    }
+    print(rank_errors);
 
     auto inversions = count_inversions(returned_elements);
     print(inversions);
