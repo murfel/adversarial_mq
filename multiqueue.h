@@ -9,7 +9,7 @@
 class multiqueue {
 private:
     std::vector<priority_queue> priority_queues{};
-    std::mt19937 mt{ std::random_device{}() };
+    std::mt19937 mt{ 0 };
     std::uniform_int_distribution<int> dist;
     int gen_random_index() {
         return dist(mt);

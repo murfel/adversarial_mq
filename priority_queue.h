@@ -41,7 +41,7 @@ public:
 };
 
 bool rand_bit() {
-    static std::mt19937 mt{std::random_device{}()};
+    static std::mt19937 mt{0};
     static std::uniform_int_distribution<uint32_t> dist;
     static uint32_t state;
     static int i = 32;
