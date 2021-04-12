@@ -22,6 +22,20 @@ std::vector<int> count_inversions(const std::vector<int> & v) {
     return total_inversions;
 }
 
+std::vector<int> calc_rank_errors(const std::vector<int> & returned_elements) {
+    std::vector<int> sorted_elements(returned_elements.size());
+    std::copy(returned_elements.begin(), returned_elements.end(), sorted_elements.begin());
+    std::sort(sorted_elements.begin(), sorted_elements.end());
+    std::vector<int> rank_errors;
+    rank_errors.reserve(returned_elements.size());
+    for (int ret_element: returned_elements) {
+        auto it = std::find(sorted_elements.begin(), sorted_elements.end(), ret_element);
+        rank_errors.push_back(std::distance(sorted_elements.begin(), it));
+        sorted_elements.erase(it);
+    }
+    return rank_errors;
+}
+
 void benchmark(int m, int k0, int k1) {
     int n = k0 + (m - 1) * k1;
     std::vector<priority_queue> pqs;
@@ -47,11 +61,7 @@ void benchmark(int m, int k0, int k1) {
     }
     print(returned_elements);
 
-    std::vector<int> rank_errors;
-    rank_errors.reserve(returned_elements.size());
-    for (int i = 0; i < returned_elements.size(); i++) {
-        rank_errors.push_back(i - returned_elements[i]);
-    }
+    auto rank_errors = calc_rank_errors(returned_elements);
     print(rank_errors);
 
     auto inversions = count_inversions(returned_elements);
