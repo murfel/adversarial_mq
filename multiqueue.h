@@ -5,6 +5,8 @@
 #include <cmath>
 
 #include "priority_queue.h"
+#include "priority_queue_with_buffer.h"
+
 
 template <class PQ>
 class multiqueue {

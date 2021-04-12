@@ -36,9 +36,10 @@ std::vector<int> calc_rank_errors(const std::vector<int> & returned_elements) {
     return rank_errors;
 }
 
+template <class PQ>
 void benchmark(int m, int k0, int k1) {
     int n = k0 + (m - 1) * k1;
-    std::vector<priority_queue> pqs;
+    std::vector<PQ> pqs;
     pqs.reserve(m);
     std::vector<int> elements0(k0);
     std::iota(elements0.begin(), elements0.end(), 0);
@@ -50,7 +51,7 @@ void benchmark(int m, int k0, int k1) {
         pqs.emplace_back(elements1);
     }
 
-    multiqueue<priority_queue> mq(pqs);
+    multiqueue<PQ> mq(pqs);
     mq.shuffle();
     print(mq);
 
@@ -70,6 +71,7 @@ void benchmark(int m, int k0, int k1) {
 
 
 int main() {
-    benchmark(10, 10'000, 100);
+    benchmark<priority_queue>(10, 10'000, 100);
+    benchmark<priority_queue_with_buffer>(10, 10'000, 100);
     return 0;
 }
