@@ -21,10 +21,10 @@ public:
     explicit priority_queue(std::vector<int> elements) : heap(std::move(elements)) {
         make_heap();
     }
-    bool empty() {
+    bool empty() const {
         return heap.empty();
     }
-    int peek() {
+    int peek() const {
         return heap[0];
     }
     int delete_min() {

@@ -39,10 +39,10 @@ public:
         std::sort(sorted_array.begin(), sorted_array.end());
         std::make_heap(heap.begin(), heap.end(), std::greater<>());
     }
-    bool empty() {
+    bool empty() const {
         return sorted_array.empty();
     }
-    int peek() {
+    int peek() const {
         return heap[0];
     }
     int delete_min() {
