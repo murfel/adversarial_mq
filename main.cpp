@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <iostream>
 #include <set>
+#include <vector>
 
 #include "multiqueue.h"
 
@@ -52,7 +53,9 @@ void benchmark(int m, int k0, int k1) {
     }
 
     multiqueue<PQ> mq(pqs);
-    mq.shuffle();
+    // pick either
+    mq.shuffle_tree_style();
+    mq.shuffle_random_permutations();
     print(mq);
 
     std::vector<int> returned_elements;

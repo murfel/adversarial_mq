@@ -57,19 +57,35 @@ public:
         }
         throw std::runtime_error("mq is empty");
     }
-    void shuffle() {
-        for (int sz = 2; sz < priority_queues.size() * 2; sz *= 2) {
-            int num_blocks = (int)priority_queues.size() / sz + (priority_queues.size() % sz != 0);
-            for (int b = 0; b < num_blocks; b++) {
-                // block [b, b+sz)
-                for (int i = 0; i < sz / 2; i++) {
-                    int i1 = b * sz + i;
-                    int i2 = i1 + sz / 2;
-                    if (i1 >= priority_queues.size() || i2 >= priority_queues.size()) {
-                        break;
+    void shuffle_tree_style() {
+        double logN = log(calc_size());
+        double logM = log(priority_queues.size());
+        int iterations = ceil(logN / logM);
+        for (int iteration = 0; iteration < iterations; iteration++) {
+            for (int sz = 2; sz < priority_queues.size() * 2; sz *= 2) {
+                int num_blocks = (int)priority_queues.size() / sz + (priority_queues.size() % sz != 0);
+                for (int b = 0; b < num_blocks; b++) {
+                    // block [b, b+sz)
+                    for (int i = 0; i < sz / 2; i++) {
+                        int i1 = b * sz + i;
+                        int i2 = i1 + sz / 2;
+                        if (i1 >= priority_queues.size() || i2 >= priority_queues.size()) {
+                            break;
+                        }
+                        ::shuffle(priority_queues[b * sz + i], priority_queues[b * sz + i + sz / 2]);
                     }
-                    ::shuffle(priority_queues[b * sz + i], priority_queues[b * sz + i + sz / 2]);
                 }
+            }
+        }
+    }
+    void shuffle_random_permutations() {
+        int iterations = ceil(log(calc_size()));
+        std::vector<int> indexes(priority_queues.size());
+        std::iota(indexes.begin(), indexes.end(), 0);
+        for (int iteration = 0; iteration < iterations; iteration++) {
+            std::shuffle(indexes.begin(), indexes.end(), std::mt19937(0));
+            for (int i = 0; i < indexes.size(); i += 2) {
+                ::shuffle(priority_queues[indexes[i]], priority_queues[indexes[i + 1]]);
             }
         }
     }
