@@ -33,6 +33,9 @@ public:
         heap.resize(heap.size() - 1);
         return element;
     }
+    std::size_t size() const {
+        return heap.size();
+    }
     friend void shuffle(priority_queue & pq1, priority_queue & pq2);
     friend void print(const priority_queue & pq) {
         std::cout << pq.heap.size() << ": ";

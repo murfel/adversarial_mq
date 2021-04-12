@@ -60,6 +60,9 @@ public:
             return array_top;
         }
     }
+    std::size_t size() const {
+        return sorted_array.size() + heap.size();
+    }
     friend void shuffle(priority_queue_with_buffer & pq1, priority_queue_with_buffer & pq2);
     friend void print(const priority_queue_with_buffer & pq) {
         std::cout << pq.sorted_array.size() << ": ";

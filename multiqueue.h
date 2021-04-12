@@ -17,6 +17,14 @@ private:
     int gen_random_index() {
         return dist(mt);
     }
+
+    std::size_t calc_size() {
+        std::size_t sz = 0;
+        for (const auto & pq: priority_queues) {
+            sz += pq.size();
+        }
+        return sz;
+    }
 public:
     explicit multiqueue(std::vector<PQ> priority_queues) :
             priority_queues(std::move(priority_queues)),
