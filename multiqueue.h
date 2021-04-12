@@ -6,16 +6,17 @@
 
 #include "priority_queue.h"
 
+template <class PQ>
 class multiqueue {
 private:
-    std::vector<priority_queue> priority_queues{};
+    std::vector<PQ> priority_queues{};
     std::mt19937 mt{ 0 };
     std::uniform_int_distribution<int> dist;
     int gen_random_index() {
         return dist(mt);
     }
 public:
-    explicit multiqueue(std::vector<priority_queue> priority_queues) :
+    explicit multiqueue(std::vector<PQ> priority_queues) :
             priority_queues(std::move(priority_queues)),
             dist(std::uniform_int_distribution<int>(0, this->priority_queues.size() - 1)) {}
     int delete_min() {
@@ -63,7 +64,7 @@ public:
         }
     }
     friend void print(const multiqueue & mq) {
-        for (const priority_queue & pq: mq.priority_queues) {
+        for (const auto & pq: mq.priority_queues) {
             print(pq);
         }
     }

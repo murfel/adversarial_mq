@@ -50,7 +50,7 @@ void benchmark(int m, int k0, int k1) {
         pqs.emplace_back(elements1);
     }
 
-    multiqueue mq(pqs);
+    multiqueue<priority_queue> mq(pqs);
     mq.shuffle();
     print(mq);
 
