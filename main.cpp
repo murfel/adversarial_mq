@@ -1,6 +1,6 @@
 #include <algorithm>
 #include <iostream>
-#include <set>
+#include <random>
 #include <vector>
 
 #include "multiqueue.h"
@@ -38,24 +38,24 @@ std::vector<int> calc_rank_errors(const std::vector<int> & returned_elements) {
 }
 
 template <class PQ>
-void benchmark(int m, int k0, int k1) {
+void benchmark(int m, int k0, int k1, const std::vector<int> & elements, shuffle_style_t shuffle_style,
+               num_shuffle_rounds_t num_shuffle_rounds) {
     int n = k0 + (m - 1) * k1;
     std::vector<PQ> pqs;
     pqs.reserve(m);
     std::vector<int> elements0(k0);
-    std::iota(elements0.begin(), elements0.end(), 0);
+    std::copy(elements.begin(), elements.begin() + k0, elements0.begin());
     pqs.emplace_back(elements0);
 
     for (int i = 1; i < m; i++) {
         std::vector<int> elements1(k1);
-        std::iota(elements1.begin(), elements1.end(), k0 + (i - 1) * k1);
+        auto begin = elements.begin() + k0 + (i - 1) * k1;
+        std::copy(begin, begin + k1, elements1.begin());
         pqs.emplace_back(elements1);
     }
 
     multiqueue<PQ> mq(pqs);
-    // pick either
-    mq.shuffle_tree_style();
-    mq.shuffle_random_permutations();
+    mq.shuffle(shuffle_style, num_shuffle_rounds);
     print(mq);
 
     std::vector<int> returned_elements;
@@ -74,7 +74,18 @@ void benchmark(int m, int k0, int k1) {
 
 
 int main() {
-    benchmark<priority_queue>(10, 10'000, 100);
-    benchmark<priority_queue_with_buffer>(10, 10'000, 100);
+    int m = 16;
+    int k0 = 10'000;
+    int k1 = 100;
+    int n = k0 + (m - 1) * k1;
+    std::vector<int> adversarial_input(n);
+    std::iota(adversarial_input.begin(), adversarial_input.end(), 0);
+
+    std::vector<int> uniform_input(n);
+    std::iota(uniform_input.begin(), uniform_input.end(), 0);
+    std::shuffle(uniform_input.begin(), uniform_input.end(), std::mt19937(0));
+
+    benchmark<priority_queue>(m, k0, k1, adversarial_input, tree_style, logM);
+    benchmark<priority_queue_with_buffer>(m, k0, k1, adversarial_input, tree_style, logM);
     return 0;
 }
