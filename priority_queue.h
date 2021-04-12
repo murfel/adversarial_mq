@@ -7,6 +7,8 @@
 #include <queue>
 #include <random>
 
+#include "utils.h"
+
 
 class priority_queue {
 private:
@@ -39,21 +41,6 @@ public:
         } std::cout << std::endl;
     }
 };
-
-bool rand_bit() {
-    static std::mt19937 mt{0};
-    static std::uniform_int_distribution<uint32_t> dist;
-    static uint32_t state;
-    static int i = 32;
-    if (i == 32) {
-        state = dist(mt);
-        i = 0;
-    }
-    bool bit = state & 1;
-    state >>= 1;
-    i++;
-    return bit;
-}
 
 void shuffle(priority_queue &pq1, priority_queue &pq2) {
     std::vector<int> heap1;

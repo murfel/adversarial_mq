@@ -8,6 +8,7 @@
 #include <random>
 #include <algorithm>
 
+#include "utils.h"
 
 class priority_queue_with_buffer {
 private:
