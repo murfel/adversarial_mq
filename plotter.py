@@ -4,7 +4,7 @@ import statistics
 xs = [1, 2, 3]
 print(len(xs))
 
-print('avg', statistics.mean(xs))
+print('avg', round(statistics.mean(xs)))
 print('max', max(xs))
 
 plt.plot(xs, 'bo', markersize=1)

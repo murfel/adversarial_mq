@@ -39,7 +39,7 @@ std::vector<int> calc_rank_errors(const std::vector<int> & returned_elements) {
 
 template <class PQ>
 void benchmark(int m, int k0, int k1, const std::vector<int> & elements, shuffle_style_t shuffle_style,
-               num_shuffle_rounds_t num_shuffle_rounds) {
+               num_shuffle_rounds_t num_shuffle_rounds = logN) {
     int n = k0 + (m - 1) * k1;
     std::vector<PQ> pqs;
     pqs.reserve(m);
@@ -56,20 +56,20 @@ void benchmark(int m, int k0, int k1, const std::vector<int> & elements, shuffle
 
     multiqueue<PQ> mq(pqs);
     mq.shuffle(shuffle_style, num_shuffle_rounds);
-    print(mq);
+//    print(mq);
 
     std::vector<int> returned_elements;
     returned_elements.reserve(n);
     for (int i = 0; i < n; i++) {
         returned_elements.push_back(mq.delete_min());
     }
-    print(returned_elements);
+//    print(returned_elements);
 
     auto rank_errors = calc_rank_errors(returned_elements);
     print(rank_errors);
 
     auto inversions = count_inversions(returned_elements);
-    print(inversions);
+//    print(inversions);
 }
 
 
@@ -85,7 +85,19 @@ int main() {
     std::iota(uniform_input.begin(), uniform_input.end(), 0);
     std::shuffle(uniform_input.begin(), uniform_input.end(), std::mt19937(0));
 
+    std::cout << "uniform input, no shuffling" << std::endl;
+    benchmark<priority_queue>(m, k0, k1, uniform_input, none);
+    std::cout << "adversarial input, no shuffling" << std::endl;
+    benchmark<priority_queue>(m, k0, k1, adversarial_input, none);
+    std::cout << "adversarial input, tree shuffling, logM" << std::endl;
     benchmark<priority_queue>(m, k0, k1, adversarial_input, tree_style, logM);
-    benchmark<priority_queue_with_buffer>(m, k0, k1, adversarial_input, tree_style, logM);
+    std::cout << "adversarial input, tree shuffling, logN" << std::endl;
+    benchmark<priority_queue>(m, k0, k1, adversarial_input, tree_style, logN);
+    std::cout << "adversarial input, perm shuffling, logM" << std::endl;
+    benchmark<priority_queue>(m, k0, k1, adversarial_input, permutation_style, logM);
+    std::cout << "adversarial input, perm shuffling, logN" << std::endl;
+    benchmark<priority_queue>(m, k0, k1, adversarial_input, permutation_style, logN);
+    std::cout << "delta-array, adversarial input, tree shuffling, logN" << std::endl;
+    benchmark<priority_queue_with_buffer>(m, k0, k1, adversarial_input, tree_style, logN);
     return 0;
 }
