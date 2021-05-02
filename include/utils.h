@@ -1,6 +1,0 @@
-#ifndef ADVERSARIAL_MQ_UTILS_H
-#define ADVERSARIAL_MQ_UTILS_H
-
-bool rand_bit();
-
-#endif //ADVERSARIAL_MQ_UTILS_H

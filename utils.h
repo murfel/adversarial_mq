@@ -1,6 +1,5 @@
-#include "../include/utils.h"
-
-#include <random>
+#ifndef ADVERSARIAL_MQ_UTILS_H
+#define ADVERSARIAL_MQ_UTILS_H
 
 bool rand_bit() {
     static std::mt19937 mt{0};
@@ -16,3 +15,5 @@ bool rand_bit() {
     i++;
     return bit;
 }
+
+#endif //ADVERSARIAL_MQ_UTILS_H
