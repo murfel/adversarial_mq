@@ -75,7 +75,7 @@ void benchmark(int m, int k0, int k1, const std::vector<int> & elements, shuffle
 
 int main() {
     int m = 16;
-    int k0 = 10'000;
+    int k0 = 1'000;
     int k1 = 100;
     int n = k0 + (m - 1) * k1;
     std::vector<int> adversarial_input(n);
@@ -86,17 +86,29 @@ int main() {
     std::shuffle(uniform_input.begin(), uniform_input.end(), std::mt19937(0));
 
     std::cout << "uniform input, no shuffling" << std::endl;
+    std::cout << "ys1 = [";
     benchmark<priority_queue>(m, k0, k1, uniform_input, none);
+    std::cout << "]" << std::endl;
     std::cout << "adversarial input, no shuffling" << std::endl;
+    std::cout << "ys2 = [";
     benchmark<priority_queue>(m, k0, k1, adversarial_input, none);
+    std::cout << "]" << std::endl;
     std::cout << "adversarial input, tree shuffling, logM" << std::endl;
     benchmark<priority_queue>(m, k0, k1, adversarial_input, tree_style, logM);
     std::cout << "adversarial input, tree shuffling, logN" << std::endl;
+    std::cout << "ys3 = [";
     benchmark<priority_queue>(m, k0, k1, adversarial_input, tree_style, logN);
+    std::cout << "]" << std::endl;
     std::cout << "adversarial input, perm shuffling, logM" << std::endl;
     benchmark<priority_queue>(m, k0, k1, adversarial_input, permutation_style, logM);
     std::cout << "adversarial input, perm shuffling, logN" << std::endl;
+    std::cout << "ys4 = [";
     benchmark<priority_queue>(m, k0, k1, adversarial_input, permutation_style, logN);
+    std::cout << "]" << std::endl;
+    int k = n / m;
+    std::cout << "ys5 = [";
+    benchmark<priority_queue>(m, k, k, uniform_input, none);
+    std::cout << "]" << std::endl;
     std::cout << "delta-array, adversarial input, tree shuffling, logN" << std::endl;
     benchmark<priority_queue_with_buffer>(m, k0, k1, adversarial_input, tree_style, logN);
     return 0;
