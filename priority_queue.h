@@ -24,10 +24,10 @@ public:
     bool empty() const {
         return heap.empty();
     }
-    int peek() const {
+    int top() const {
         return heap[0];
     }
-    int delete_min() {
+    int pop() {
         auto element = heap[0];
         std::pop_heap(heap.begin(), heap.end(), std::greater<>());
         heap.resize(heap.size() - 1);

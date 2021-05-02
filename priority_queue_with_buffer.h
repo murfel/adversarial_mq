@@ -42,10 +42,10 @@ public:
     bool empty() const {
         return sorted_array.empty();
     }
-    int peek() const {
+    int top() const {
         return heap[0];
     }
-    int delete_min() {
+    int pop() {
         if (heap.empty()) {
             auto array_top = sorted_array.front();
             sorted_array.pop_front();

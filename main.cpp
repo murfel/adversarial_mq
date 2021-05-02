@@ -61,7 +61,7 @@ void benchmark(int m, int k0, int k1, const std::vector<int> & elements, shuffle
     std::vector<int> returned_elements;
     returned_elements.reserve(n);
     for (int i = 0; i < n; i++) {
-        returned_elements.push_back(mq.delete_min());
+        returned_elements.push_back(mq.pop());
     }
 //    print(returned_elements);
 
