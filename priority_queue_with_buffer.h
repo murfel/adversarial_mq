@@ -33,6 +33,7 @@ private:
         std::inplace_merge(sorted_array.begin(), middle, sorted_array.end());
     }
 public:
+    priority_queue_with_buffer() = default;
     explicit priority_queue_with_buffer(std::vector<int> & elements) :
             sorted_array(elements.begin(), elements.begin() + delta),
             heap(elements.begin() + delta, elements.end()) {
@@ -44,6 +45,14 @@ public:
     }
     int top() const {
         return heap[0];
+    }
+    void push(int value) {
+        sorted_array.insert(std::upper_bound(sorted_array.begin(), sorted_array.end(), value), value);
+        if (sorted_array.size() > delta) {
+            heap.push_back(sorted_array.back());
+            std::push_heap(heap.begin(), heap.end(), std::greater<>());
+            sorted_array.pop_back();
+        }
     }
     int pop() {
         if (heap.empty()) {

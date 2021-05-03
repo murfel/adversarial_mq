@@ -18,6 +18,7 @@ private:
         std::make_heap(heap.begin(), heap.end(), std::greater<>());
     }
 public:
+    priority_queue() = default;
     explicit priority_queue(std::vector<int> elements) : heap(std::move(elements)) {
         make_heap();
     }
@@ -26,6 +27,10 @@ public:
     }
     int top() const {
         return heap[0];
+    }
+    void push(int value) {
+        heap.push_back(value);
+        std::push_heap(heap.begin(), heap.end(), std::greater<>());
     }
     int pop() {
         auto element = heap[0];

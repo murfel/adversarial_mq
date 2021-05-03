@@ -77,9 +77,18 @@ private:
         }
     }
 public:
+    explicit multiqueue(std::size_t num_queues) :
+            priority_queues(std::vector<PQ>(num_queues)),
+            dist(std::uniform_int_distribution<int>(0, this->priority_queues.size() - 1)) {}
     explicit multiqueue(std::vector<PQ> priority_queues) :
             priority_queues(std::move(priority_queues)),
             dist(std::uniform_int_distribution<int>(0, this->priority_queues.size() - 1)) {}
+    void push(int value, int index = -1) {
+        if (index == -1) {
+            index = gen_random_index();
+        }
+        priority_queues[index].push(value);
+    }
     int pop() {
         for (int it = 0; it < 1000; it++) {
             int i, j;
@@ -94,7 +103,7 @@ public:
                 continue;
             }
 
-            if (pq1.top() <pq2.top()) {
+            if (pq1.top() < pq2.top()) {
                 return pq1.pop();
             } else {
                 return pq2.pop();
