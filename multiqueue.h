@@ -89,7 +89,7 @@ public:
         }
         priority_queues[index].push(value);
     }
-    int pop() {
+    int pop(bool shuffle = false) {
         for (int it = 0; it < 1000; it++) {
             int i, j;
             i = gen_random_index();
@@ -101,6 +101,10 @@ public:
 
             if (pq1.empty() || pq2.empty()) {
                 continue;
+            }
+
+            if (shuffle) {
+                ::shuffle(pq1, pq2);
             }
 
             if (pq1.top() < pq2.top()) {
