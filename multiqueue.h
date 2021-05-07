@@ -21,6 +21,7 @@ template <class PQ>
 class multiqueue {
 private:
     std::vector<PQ> priority_queues{};
+    std::vector<int> pushed_elements;
     std::mt19937 mt{ 0 };
     std::uniform_int_distribution<int> dist;
     int gen_random_index() {
@@ -34,6 +35,17 @@ private:
         }
         return sz;
     }
+
+    int calc_rank_and_remove(int value) {
+        if (value == -1) return -1;
+        std::sort(pushed_elements.begin(), pushed_elements.end());
+        auto value_it = std::find(pushed_elements.begin(), pushed_elements.end(), value);
+        assert(value_it != pushed_elements.end());
+        int rank = value_it - pushed_elements.begin();
+        pushed_elements.erase(value_it);
+        return rank;
+    }
+
     void shuffle_tree_style(num_shuffle_rounds_t num_shuffle_rounds) {
         int iterations;
         if (num_shuffle_rounds == logM) {
@@ -84,12 +96,15 @@ public:
             priority_queues(std::move(priority_queues)),
             dist(std::uniform_int_distribution<int>(0, this->priority_queues.size() - 1)) {}
     void push(int value, int index = -1) {
+        pushed_elements.push_back(value);
         if (index == -1) {
             index = gen_random_index();
         }
         priority_queues[index].push(value);
     }
-    int pop(bool shuffle = false) {
+    std::pair<int, int> pop(bool shuffle = false) {
+        int value;
+        bool popped = false;
         for (int it = 0; it < 1000; it++) {
             int i, j;
             i = gen_random_index();
@@ -107,19 +122,31 @@ public:
                 ::shuffle(pq1, pq2);
             }
 
+            if (pq1.empty() || pq2.empty()) {
+                continue;
+            }
+
             if (pq1.top() < pq2.top()) {
-                return pq1.pop();
+                value = pq1.pop();
             } else {
-                return pq2.pop();
+                value = pq2.pop();
+            }
+            popped = true;
+            break;
+        }
+        if (!popped) {
+            // if we're here, probably only one non-empty queue is left
+            for (auto & pq: priority_queues) {
+                if (!pq.empty()) {
+                    value = pq.pop();
+                    popped = true;
+                }
             }
         }
-        // if we're here, probably only one non-empty queue is left
-        for (auto & pq: priority_queues) {
-            if (!pq.empty()) {
-                return pq.pop();
-            }
+        if (!popped) {
+            throw std::runtime_error("mq is empty");
         }
-        throw std::runtime_error("mq is empty");
+        return std::make_pair(value, calc_rank_and_remove(value));
     }
     void shuffle(shuffle_style_t shuffle_style = permutation_style, num_shuffle_rounds_t num_shuffle_rounds = logN) {
         if (shuffle_style == tree_style) {
@@ -127,6 +154,9 @@ public:
         } else if (shuffle_style == permutation_style) {
             shuffle_permutation_style(num_shuffle_rounds);
         }
+    }
+    std::size_t size() {
+        return pushed_elements.size();
     }
     friend void print(const multiqueue & mq) {
         for (const auto & pq: mq.priority_queues) {
