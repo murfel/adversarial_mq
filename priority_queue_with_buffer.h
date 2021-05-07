@@ -29,6 +29,7 @@ private:
             }
             sorted_array.push_back(heap.front());
             std::pop_heap(heap.begin(), heap.end(), std::greater<>());
+            heap.pop_back();
         }
         std::inplace_merge(sorted_array.begin(), middle, sorted_array.end());
     }
@@ -44,7 +45,8 @@ public:
         return sorted_array.empty();
     }
     int top() const {
-        return heap[0];
+        assert(!empty());
+        return sorted_array[0];
     }
     void push(int value) {
         sorted_array.insert(std::upper_bound(sorted_array.begin(), sorted_array.end(), value), value);
@@ -86,7 +88,7 @@ public:
 };
 
 void shuffle(priority_queue_with_buffer &pq1, priority_queue_with_buffer &pq2) {
-    std::vector<int> merged_arrays(pq1.delta + pq2.delta);
+    std::vector<int> merged_arrays(pq1.sorted_array.size() + pq2.sorted_array.size());
     std::merge(pq1.sorted_array.begin(), pq1.sorted_array.end(),
                pq2.sorted_array.begin(), pq2.sorted_array.end(),
                merged_arrays.begin());

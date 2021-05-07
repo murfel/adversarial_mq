@@ -162,6 +162,7 @@ public:
         for (const auto & pq: mq.priority_queues) {
             print(pq);
         }
+        std::cout << std::endl;
     }
 };
 
