@@ -6,8 +6,9 @@
 
 #include "multiqueue.h"
 
-void print(const std::vector<int> & v) {
-    for (int elem: v) {
+template <class T>
+void print(const std::vector<T> & v) {
+    for (const T &elem: v) {
         std::cout << elem << ", ";
     } std::cout << std::endl;
 }
@@ -76,8 +77,9 @@ void benchmark(int m, int k0, int k1, const std::vector<int> & elements, shuffle
 }
 
 template <class PQ>
-void benchmark_online(int m, double push_fraction, double zero_pq_push_fraction, const std::vector<int> & elements,
-        bool shuffle, const std::string &name) {
+void benchmark_online(int m, int init_sz, double push_fraction, double zero_pq_push_fraction,
+        const std::vector<int> &zero_pq_elements, const std::vector<int> &elements, bool shuffle,
+        const std::string &name) {
     int n = (int)elements.size();
     multiqueue<PQ> mq(m);
 
@@ -89,17 +91,25 @@ void benchmark_online(int m, double push_fraction, double zero_pq_push_fraction,
     auto dice = [&mt, &dist] { return dist(mt); };
 
     auto it = elements.begin();
+
+    bool separate_zero_pq_elements = !zero_pq_elements.empty();
+    auto it0 = zero_pq_elements.begin();
+
+    std::uniform_int_distribution<int> choose_pq_dist(1, m - 1);  // []
+    auto choose_pq_dice = [&mt, &choose_pq_dist] { return choose_pq_dist(mt); };
+
     while (true) {
-        if (dice() < push_fraction) {
-            if (it == elements.end()) {
+        if (init_sz > 0 || dice() < push_fraction) {
+            if (it == elements.end() || (separate_zero_pq_elements && it0 == zero_pq_elements.end())) {
                 break;
             }
-            int element = *(it++);
             if (dice() < zero_pq_push_fraction) {
+                int element = separate_zero_pq_elements ? *(it0++) : *(it++);
                 mq.push(element, 0);
             } else {
-                mq.push(element);
+                mq.push(*(it++), choose_pq_dice());
             }
+            if (init_sz != 0) init_sz--;
         } else {
             if (mq.size() > 0) {
                 auto p = mq.pop(shuffle);
@@ -108,6 +118,9 @@ void benchmark_online(int m, double push_fraction, double zero_pq_push_fraction,
         }
     }
     print_python(ranks, name);
+
+    auto v = mq.get_max_sizes();
+//    std::cout << v[0] << " " << *std::max_element(v.begin() + 1, v.end()) << std::endl;
 }
 
 
@@ -123,11 +136,29 @@ int main() {
     std::iota(uniform_input.begin(), uniform_input.end(), 0);
     std::shuffle(uniform_input.begin(), uniform_input.end(), std::mt19937(0));
 
-    benchmark_online<priority_queue>(m, .9, .9, uniform_input, false, "uni_noshuf");
-    benchmark_online<priority_queue>(m, .9, .9, uniform_input, true, "uni_shuf");
-    benchmark_online<priority_queue_with_buffer<10>>(m, .9, .9, uniform_input, true, "uni_shuf_buf_10");
-    benchmark_online<priority_queue_with_buffer<15>>(m, .9, .9, uniform_input, true, "uni_shuf_buf_15");
-    benchmark_online<priority_queue_with_buffer<25>>(m, .9, .9, uniform_input, true, "uni_shuf_buf_25");
+//    benchmark_online<priority_queue>(m, .9, .9, {}, uniform_input, false, "uni_noshuf");
+//    benchmark_online<priority_queue>(m, .9, .9, {}, uniform_input, true, "uni_shuf");
+//    benchmark_online<priority_queue_with_buffer<10>>(m, .9, .9, {}, uniform_input, true, "uni_shuf_buf_10");
+//    benchmark_online<priority_queue_with_buffer<15>>(m, .9, .9, {}, uniform_input, true, "uni_shuf_buf_15");
+//    benchmark_online<priority_queue_with_buffer<25>>(m, .9, .9, {}, uniform_input, true, "uni_shuf_buf_25");
+
+    int k = 250;
+    std::vector<int> e0(k);
+    std::iota(e0.begin(), e0.end(), 0);
+    std::vector<int> e(k * (m - 1));
+    std::iota(e.begin(), e.end(), k);
+    std::shuffle(e.begin(), e.end(), std::mt19937(0));
+
+    int init_sz = 1000;
+    double push_fraction = 0.9;
+    double zero_pq_push_fraction = 1.0 / m;
+
+    benchmark_online<priority_queue>(m, init_sz, push_fraction, zero_pq_push_fraction, e0, e, false, "uni_noshuf");
+    benchmark_online<priority_queue>(m, init_sz, push_fraction, zero_pq_push_fraction, e0, e, true, "uni_shuf");
+    benchmark_online<priority_queue_with_buffer<10>>(m, init_sz, push_fraction, zero_pq_push_fraction, e0, e, true, "uni_shuf_buf_10");
+    benchmark_online<priority_queue_with_buffer<15>>(m, init_sz, push_fraction, zero_pq_push_fraction, e0, e, true, "uni_shuf_buf_15");
+    benchmark_online<priority_queue_with_buffer<25>>(m, init_sz, push_fraction, zero_pq_push_fraction, e0, e, true, "uni_shuf_buf_25");
+
 
 //    std::cout << "uniform input, no shuffling" << std::endl;
 //    std::cout << "ys1 = [";
