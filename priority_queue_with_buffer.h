@@ -10,9 +10,9 @@
 
 #include "utils.h"
 
+template <int delta>
 class priority_queue_with_buffer {
 private:
-    const int delta = 10;
     std::deque<int> sorted_array;
     std::vector<int> heap;
 
@@ -74,8 +74,10 @@ public:
     std::size_t size() const {
         return sorted_array.size() + heap.size();
     }
-    friend void shuffle(priority_queue_with_buffer & pq1, priority_queue_with_buffer & pq2);
-    friend void print(const priority_queue_with_buffer & pq) {
+    template<int inner_delta>
+    friend void shuffle(priority_queue_with_buffer<inner_delta> & pq1, priority_queue_with_buffer<inner_delta> & pq2);
+    template<int inner_delta>
+    friend void print(const priority_queue_with_buffer<inner_delta> & pq) {
         std::cout << pq.sorted_array.size() << ": ";
         for (int element: pq.sorted_array) {
             std::cout << element << " ";
@@ -87,7 +89,8 @@ public:
     }
 };
 
-void shuffle(priority_queue_with_buffer &pq1, priority_queue_with_buffer &pq2) {
+template <int delta>
+void shuffle(priority_queue_with_buffer<delta> &pq1, priority_queue_with_buffer<delta> &pq2) {
     std::vector<int> merged_arrays(pq1.sorted_array.size() + pq2.sorted_array.size());
     std::merge(pq1.sorted_array.begin(), pq1.sorted_array.end(),
                pq2.sorted_array.begin(), pq2.sorted_array.end(),
