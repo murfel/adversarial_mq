@@ -155,8 +155,15 @@ public:
             shuffle_permutation_style(num_shuffle_rounds);
         }
     }
-    std::size_t size() {
+    std::size_t size() const {
         return pushed_elements.size();
+    }
+    std::vector<std::size_t> get_max_sizes() const {
+        std::vector<std::size_t> max_sizes;
+        for (const auto & pq: priority_queues) {
+            max_sizes.push_back(pq.get_max_size());
+        }
+        return max_sizes;
     }
     friend void print(const multiqueue & mq) {
         for (const auto & pq: mq.priority_queues) {

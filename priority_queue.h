@@ -12,6 +12,7 @@
 
 class priority_queue {
 private:
+    std::size_t max_size = 0;
     std::vector<int> heap;
 
     void make_heap() {
@@ -31,6 +32,7 @@ public:
     void push(int value) {
         heap.push_back(value);
         std::push_heap(heap.begin(), heap.end(), std::greater<>());
+        max_size = std::max(max_size, size());
     }
     int pop() {
         auto element = heap[0];
@@ -40,6 +42,9 @@ public:
     }
     std::size_t size() const {
         return heap.size();
+    }
+    std::size_t get_max_size() const {
+        return max_size;
     }
     friend void shuffle(priority_queue & pq1, priority_queue & pq2);
     friend void print(const priority_queue & pq) {

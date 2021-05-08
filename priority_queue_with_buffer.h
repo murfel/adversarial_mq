@@ -13,6 +13,7 @@
 template <int delta>
 class priority_queue_with_buffer {
 private:
+    std::size_t max_size = 0;
     std::deque<int> sorted_array;
     std::vector<int> heap;
 
@@ -55,6 +56,7 @@ public:
             std::push_heap(heap.begin(), heap.end(), std::greater<>());
             sorted_array.pop_back();
         }
+        max_size = std::max(max_size, size());
     }
     int pop() {
         if (heap.empty()) {
@@ -73,6 +75,9 @@ public:
     }
     std::size_t size() const {
         return sorted_array.size() + heap.size();
+    }
+    std::size_t get_max_size() const {
+        return max_size;
     }
     template<int inner_delta>
     friend void shuffle(priority_queue_with_buffer<inner_delta> & pq1, priority_queue_with_buffer<inner_delta> & pq2);
