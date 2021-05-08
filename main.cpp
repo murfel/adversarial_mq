@@ -123,14 +123,11 @@ int main() {
     std::iota(uniform_input.begin(), uniform_input.end(), 0);
     std::shuffle(uniform_input.begin(), uniform_input.end(), std::mt19937(0));
 
-    benchmark_online<priority_queue>(m, .9, .9, adversarial_input, false, "adv_noshuf");
-    benchmark_online<priority_queue>(m, .9, .9, adversarial_input, true, "adv_shuf");
-    benchmark_online<priority_queue_with_buffer>(m, .9, .9, adversarial_input, true, "adv_shuf_buf");
-
     benchmark_online<priority_queue>(m, .9, .9, uniform_input, false, "uni_noshuf");
     benchmark_online<priority_queue>(m, .9, .9, uniform_input, true, "uni_shuf");
-    benchmark_online<priority_queue_with_buffer>(m, .9, .9, uniform_input, true, "uni_shuf_buf");
-
+    benchmark_online<priority_queue_with_buffer<10>>(m, .9, .9, uniform_input, true, "uni_shuf_buf_10");
+    benchmark_online<priority_queue_with_buffer<15>>(m, .9, .9, uniform_input, true, "uni_shuf_buf_15");
+    benchmark_online<priority_queue_with_buffer<25>>(m, .9, .9, uniform_input, true, "uni_shuf_buf_25");
 
 //    std::cout << "uniform input, no shuffling" << std::endl;
 //    std::cout << "ys1 = [";
