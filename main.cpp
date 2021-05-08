@@ -88,8 +88,13 @@ void benchmark_online(int m, double push_fraction, double zero_pq_push_fraction,
     std::uniform_real_distribution<double> dist;
     auto dice = [&mt, &dist] { return dist(mt); };
 
-    for (int element : elements) {
+    auto it = elements.begin();
+    while (true) {
         if (dice() < push_fraction) {
+            if (it == elements.end()) {
+                break;
+            }
+            int element = *(it++);
             if (dice() < zero_pq_push_fraction) {
                 mq.push(element, 0);
             } else {
