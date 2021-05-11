@@ -104,7 +104,7 @@ void shuffle(priority_queue_with_buffer<T, delta> &pq1, priority_queue_with_buff
                merged_arrays.begin());
     pq1.sorted_array.clear();
     pq2.sorted_array.clear();
-    std::for_each(merged_arrays.begin(), merged_arrays.end(), [&pq1, &pq2](int x) {
+    std::for_each(merged_arrays.begin(), merged_arrays.end(), [&pq1, &pq2](T x) {
         if (rand_bit()) {
             pq1.sorted_array.push_back(x);
         } else {

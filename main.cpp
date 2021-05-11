@@ -6,6 +6,8 @@
 #include <fstream>
 
 #include "multiqueue.h"
+#include "dijkstra.h"
+#include "read_input.h"
 
 template <class T>
 void print(const std::vector<T> & v, std::ostream& ostream) {
@@ -134,8 +136,18 @@ void benchmark_online(int m, int init_sz, double push_fraction, double zero_pq_p
 //    std::cout << push_cnt << " " << pop_cnt << std::endl;
 }
 
-
 int main() {
+    if (true) {
+        AdjList adj_list = read_input("NY");
+        std::cerr << dijkstra<multiqueue<QueueElement, priority_queue<QueueElement>>>(adj_list, 2) << std::endl;
+        std::cerr << dijkstra<multiqueue<QueueElement, priority_queue<QueueElement>>>(adj_list, 10) << std::endl;
+        std::cerr << dijkstra<multiqueue<QueueElement, priority_queue_with_buffer<QueueElement, 4>>>(adj_list, 2) << std::endl;
+        std::cerr << dijkstra<multiqueue<QueueElement, priority_queue_with_buffer<QueueElement, 4>>>(adj_list, 10) << std::endl;
+        std::cerr << dijkstra<multiqueue<QueueElement, priority_queue_with_buffer<QueueElement, 10>>>(adj_list, 2) << std::endl;
+        std::cerr << dijkstra<multiqueue<QueueElement, priority_queue_with_buffer<QueueElement, 10>>>(adj_list, 10) << std::endl;
+        exit(0);
+    }
+
     int m = 16;
     int k0 = 1'000;
     int k1 = 100;
