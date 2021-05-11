@@ -17,11 +17,11 @@ enum num_shuffle_rounds_t {
     logN, logM
 };
 
-template <class PQ>
+template <class T, class PQ>
 class multiqueue {
 private:
     std::vector<PQ> priority_queues{};
-    std::vector<int> pushed_elements;
+    std::vector<T> pushed_elements;
     std::mt19937 mt{ 0 };
     std::uniform_int_distribution<int> dist;
     int gen_random_index() {
@@ -36,7 +36,7 @@ private:
         return sz;
     }
 
-    int calc_rank_and_remove(int value) {
+    int calc_rank_and_remove(T value) {
         if (value == -1) return -1;
         std::sort(pushed_elements.begin(), pushed_elements.end());
         auto value_it = std::find(pushed_elements.begin(), pushed_elements.end(), value);
@@ -95,15 +95,15 @@ public:
     explicit multiqueue(std::vector<PQ> priority_queues) :
             priority_queues(std::move(priority_queues)),
             dist(std::uniform_int_distribution<int>(0, this->priority_queues.size() - 1)) {}
-    void push(int value, int index = -1) {
+    void push(T value, int index = -1) {
         pushed_elements.push_back(value);
         if (index == -1) {
             index = gen_random_index();
         }
         priority_queues[index].push(value);
     }
-    std::pair<int, int> pop(bool shuffle = false) {
-        int value;
+    std::pair<T, int> pop(bool shuffle = false) {
+        T value;
         bool popped = false;
         for (int it = 0; it < 1000; it++) {
             int i, j;
@@ -157,6 +157,17 @@ public:
     }
     std::size_t size() const {
         return pushed_elements.size();
+    }
+    bool empty() const {
+        return size() == 0;
+    }
+    bool has_empty_pq() const {
+        for (const auto & pq: priority_queues) {
+            if (pq.size() == 0) {
+                return true;
+            }
+        }
+        return false;
     }
     std::vector<std::size_t> get_max_sizes() const {
         std::vector<std::size_t> max_sizes;
